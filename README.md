@@ -51,3 +51,8 @@ understood.
 > 8. Upload code to a github repo and send back to your Zencastr contact
 
 okay
+
+
+----
+
+I've added some tentative dependencies, but I've got to go to sleep for the night. I'll pick this up tomorrow.

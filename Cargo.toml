@@ -7,3 +7,20 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+# evmap is a map data structures with handy properties
+# - lock free
+# - eventually consistent
+# - concurrent and safe
+evmap = "10.0.2"
+
+# this could be useful to see if we are running low on memory
+# TODO enable this dependency when you get as far as handling such concerns
+# sysinfo = "0.15.3"
+
+# Rust is still a relatively new language to me,
+# so I'll need to do a little research to choose between the server libraries.
+# So far these are my top choices I'm considering:
+# iron = "0.6.1"
+# tokio = "0.3.6"
+# reqwest = "0.10.10"
