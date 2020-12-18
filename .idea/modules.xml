@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/zencachr.iml" filepath="$PROJECT_DIR$/zencachr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rusty-cache.iml" filepath="$PROJECT_DIR$/rusty-cache.iml" />
     </modules>
   </component>
 </project>

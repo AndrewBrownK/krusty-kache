@@ -1,5 +1,5 @@
 [package]
-name = "zencachr"
+name = "rusty-cache"
 version = "1.0.0"
 authors = ["abrown <andrew.brown.unl@gmail.com>"]
 edition = "2018"
