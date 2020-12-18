@@ -7,6 +7,7 @@ use router::{Router};
 use std::sync::{Arc, Mutex};
 use std::io::Read;
 use evmap::{WriteHandle, ReadHandleFactory};
+use thread_local::ThreadLocal;
 
 /// Main function, the entry point for our program.
 fn main() {
@@ -22,20 +23,13 @@ fn main() {
     let write_handle_put = write_handle_post.clone();
     let write_handle_delete = write_handle_post.clone();
 
-    // Route handlers
-    // POST and PUT are synonymous in this case, although PUT may be more semantically correct.
-    let post_handler = create_put_handler(write_handle_post);
-    let put_handler = create_put_handler(write_handle_put);
-    let get_handler = create_get_handler(read_handle_factory);
-    let delete_handler = create_delete_handler(write_handle_delete);
-
     // Here we define a single route that works with four methods (GET, POST, PUT, DELETE).
     let mut routes = Router::new();
     routes
-        .get("/cache/:key", get_handler, "cache_get")
-        .post("/cache/:key", post_handler, "cache_post")
-        .put("/cache/:key", put_handler, "cache_put")
-        .delete("/cache/:key", delete_handler, "cache_delete");
+        .get("/cache/:key", create_get_handler(read_handle_factory), "cache_get")
+        .post("/cache/:key", create_put_handler(write_handle_post), "cache_post")
+        .put("/cache/:key", create_put_handler(write_handle_put), "cache_put")
+        .delete("/cache/:key", create_delete_handler(write_handle_delete), "cache_delete");
 
     // Here we actually start the server.
     match Iron::new(routes).http("localhost:3000") {
@@ -81,13 +75,13 @@ fn create_put_handler(write_handle: Arc<Mutex<WriteHandle<String, String>>>) -> 
     use_key_and_value(move |key, value| {
         match write_handle.lock() {
             Ok(mut write_handle) => {
-                write_handle.update(key.clone(), value);
+                write_handle.update(key, value);
                 write_handle.refresh();
                 Response::with((status::Ok, ""))
             },
             Err(err) => {
                 println!("Our write handle mutex is poisoned! Why did you panic? {}", err);
-                Response::with((status::InternalServerError, key.clone()))
+                Response::with((status::InternalServerError, key))
             }
         }
     })
@@ -98,34 +92,34 @@ fn create_delete_handler(write_handle: Arc<Mutex<WriteHandle<String, String>>>) 
     use_key(move |key| {
         match write_handle.lock() {
             Ok(mut write_handle) => {
-                write_handle.empty(key.clone());
+                write_handle.empty(key);
                 write_handle.refresh();
                 Response::with((status::Ok, ""))
             },
             Err(err) => {
                 println!("Our write handle mutex is poisoned! Why did you panic? {}", err);
-                Response::with((status::InternalServerError, key.clone()))
+                Response::with((status::InternalServerError, key))
             }
         }
     })
 }
 
 /// This is the GET handler logic.
+/// ReadHandles are not Sync or Send, and so we cannot give them to this handler which will be
+/// multithreaded. Instead, the ReadHandleFactory is Sync and Send, and we can use it acquire a
+/// ReadHandle in each thread separately.
 fn create_get_handler(read_handle_factory: ReadHandleFactory<String, String>) -> Box<dyn Handler> {
+    // The drawback with ReadHandleFactory is that using it to acquire a new ReadHandle puts us
+    // through a synchronized lock. Therefore we don't want to get a fresh read handle once per
+    // request, because that will make every concurrent request go through the same lock. Instead
+    // of getting a fresh read handle once per request, we want a fresh read handle once per thread.
+    // That is why we are using ThreadLocal to lazily initialize a single ReadHandle per thread.
+    let read_handle = ThreadLocal::new();
     use_key(move |key| {
-        // todo: acquiring a read handle goes through a lock, and so does not scale concurrently.
-        //  Ideally we should only acquire a read handle once per thread, not once per request.
-        //  However of borrowing rules, it is not as simple as scooting rh out of this closure.
-        //  So figure this out when you have the time to.
-        let rh = read_handle_factory.handle();
-
-        // For some reason the borrow checker won't let us return this expression directly
-        // because of rh's lifetime. So let's just slap the result in a variable and return it
-        // right after.
-        let result = match rh.get_one(&key) {
+        let read_handle = read_handle.get_or(|| read_handle_factory.handle());
+        match read_handle.get_one(&key) {
             None => Response::with(status::NoContent),
             Some(value) => Response::with((status::Ok, (*value).as_str()))
-        };
-        result
+        }
     })
 }
