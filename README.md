@@ -31,7 +31,7 @@ lovely
 
 > 4. The API definitions and formats used to communicate with this API are up to you
 
-off the top of my head, REST is very logical do to GET, PUT, DELETE, etc. A json payload seems fine. So far I'm undecided what to do for the key. Maybe I'll accept any reasonable string.
+off the top of my head, REST is very logical do to GET, PUT, DELETE, etc. A json payload seems fine. So far I'm undecided what to do for the key. Maybe I'll accept any reasonable string. Actually, forget JSON payload, since we don't care about the contents of what you are caching. We'll just use the HTTP body and not care what it is.
 
 > 5. We expect that this service will be runnable, we’ll be able to connect to it, cache things
    and retrieve them.
@@ -56,3 +56,41 @@ okay
 ----
 
 I've added some tentative dependencies, but I've got to go to sleep for the night. I'll pick this up tomorrow.
+
+
+--- 
+
+
+Implementation plan:
+- Get a web server with GET/POST/DELETE running
+   - test it using curl
+- Hook up the web server to the map 
+- tag 1.0.0 
+   - this version is MVP of homework
+   - everything beyond is an exercise in fun
+- Add some tests in Rust, and also measure performance 
+- tag 1.0.1
+- add command line options and/or other configuration
+   - number of threads 
+   - limit to key size 
+   - limit to value size
+- tag 1.1.0
+- Implement reaction to resource limitations
+   - number of cache entries limit
+   - memory usage limit (if there's an easy way to measure this)
+- tag 2.0.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 [package]
 name = "zencachr"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["abrown <andrew.brown.unl@gmail.com>"]
 edition = "2018"
 
@@ -18,9 +18,10 @@ evmap = "10.0.2"
 # TODO enable this dependency when you get as far as handling such concerns
 # sysinfo = "0.15.3"
 
-# Rust is still a relatively new language to me,
-# so I'll need to do a little research to choose between the server libraries.
-# So far these are my top choices I'm considering:
-# iron = "0.6.1"
-# tokio = "0.3.6"
-# reqwest = "0.10.10"
+# The top choices for a server (as far as I am finding) is iron and warp.
+# Both build upon warp which builds upon tokio. Warp has more recent updates,
+# but Iron has a bigger team behind it. Both seem nice. I'm choosing Iron for
+# now because it emphasizes concurrency and extensibility, so we shouldn't
+# be accidentally locking ourselves into a pattern we can't get out of.
+iron = "0.6.1"
+router = "0.6.0"
