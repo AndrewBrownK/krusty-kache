@@ -2,7 +2,9 @@ Hello world,
 
 This is a practice project to both represent my coding abilities, and grow more accustom to Rust (which I'm mostly new to).
 
-This readme file is an sort of train of thought. Should you browse the git history, you can see both my development, and my thought processes every step of the way.
+This readme file is a sort of train of thought. Should you browse the git history, you can see both my development, and my thought processes every step of the way.
+
+Fair warning reinforcement: This is very stream of conscious.
 
 Here we go. Let's start with the project definition.
 
