@@ -1,5 +1,5 @@
 [package]
-name = "rusty-cache"
+name = "krusty-kache"
 version = "1.0.0"
 authors = ["abrown <andrew.brown.unl@gmail.com>"]
 edition = "2018"
@@ -25,3 +25,6 @@ evmap = "10.0.2"
 # be accidentally locking ourselves into a pattern we can't get out of.
 iron = "0.6.1"
 router = "0.6.0"
+
+# This helps us reach maximum concurrency, specifically when handling evamp's ReadHandles
+thread_local = "1.0.1"
