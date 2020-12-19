@@ -32,6 +32,7 @@ fn main() {
         .delete("/cache/:key", create_delete_handler(write_handle_delete), "cache_delete");
 
     // Here we actually start the server.
+    // By default, Iron uses 8 times the number of CPU threads.
     match Iron::new(routes).http("localhost:3000") {
         Err(e) => println!("Iron server had trouble initializing =( {}", e),
         _ => println!("Iron server is running!")

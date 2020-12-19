@@ -7,6 +7,20 @@ This readme file is a sort of train of thought. Should you browse the git histor
 
 Fair warning reinforcement: This readme is very stream of conscious.
 
+How to Build and Run
+---
+
+This was developed using rust 1.47.0 in IntelliJ 2020.3
+
+To build a release binary, execute 
+
+```cargo build --release```
+
+To run the binary, execute
+
+```./target/release/krusty-kache```
+
+
 Project Definition
 ---
 
@@ -46,3 +60,5 @@ Implementation plan:
    - number of cache entries limit
    - memory usage limit (if there's an easy way to measure this)
 - tag 2.0.0
+- Implement distributed capabilities
+- tag 3.0.0
